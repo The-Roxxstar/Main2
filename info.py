@@ -98,6 +98,9 @@ SEASONS = ["season 1" , "season 2" , "season 3" , "season 4", "season 5" , "seas
 
 QUALITIES = ["360P", "", "480P", "", "720P", "", "1080P", "", "1440P", "", "2160P", ""]
 
+REF_PREMIUM = 30
+PREMIUM_POINT = 1500
+
 # Online Stream and Download
 NO_PORT = bool(environ.get('NO_PORT', False))
 APP_NAME = None
