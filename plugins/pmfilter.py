@@ -1,6 +1,7 @@
 # Kanged From @TroJanZheX
 # Thanks @DeletedFromEarth
 import asyncio
+from email.mime import message
 import re
 import ast
 import math
@@ -1113,7 +1114,7 @@ async def cb_handler(client: Client, query: CallbackQuery):
     
     elif query.data.startswith("send_fsall"):
         temp_var, ident, key, offset = query.data.split("#")
-        search = BUTTON0.get(key)
+        search = BUTTON.get(key)
         if not search:
             await query.answer(script.OLD_ALRT_TXT.format(query.from_user.first_name),show_alert=True)
             return
