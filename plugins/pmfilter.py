@@ -1537,7 +1537,8 @@ async def cb_handler(client: Client, query: CallbackQuery):
                     InlineKeyboardButton('• ᴄᴏᴍᴍᴀɴᴅꜱ •', callback_data='help'),
                     InlineKeyboardButton('• ᴀʙᴏᴜᴛ •', callback_data='about')
                 ],[
-                    InlineKeyboardButton('✨ ʙᴜʏ ꜱᴜʙꜱᴄʀɪᴘᴛɪᴏɴ : ʀᴇᴍᴏᴠᴇ ᴀᴅꜱ ✨', callback_data="premium_info")
+                    InlineKeyboardButton('✨ ʙᴜʏ ꜱᴜʙꜱᴄʀɪᴘᴛɪᴏɴ : ʀᴇᴍᴏᴠᴇ ᴀᴅꜱ ✨', callback_data="premium_info"),
+                    InlineKeyboardButton('🎁 ɢᴇᴛ ᴘʀᴇᴍɪᴜᴍ ғʀᴇᴇ 🎁', callback_data=f'free_premium#{query.from_user.id}')
                   ]]
         
         reply_markup = InlineKeyboardMarkup(buttons)
@@ -2839,3 +2840,57 @@ async def global_filters(client, message, text=False):
                 break
     else:
         return False
+
+@Client.on_callback_query()
+async def cb_handler(client: Client, query: CallbackQuery):
+    if query.data == "close_data":
+        try:
+            user = query.message.reply_to_message.from_user.id
+        except:
+            user = query.from_user.id
+        if int(user) != 0 and query.from_user.id != int(user):
+            return await query.answer(script.ALRT_TXT, show_alert=True)
+        await query.answer("ᴛʜᴀɴᴋs ꜰᴏʀ ᴄʟᴏsᴇ 🙈")
+        await query.message.delete()
+        try:
+            await query.message.reply_to_message.delete()
+        except:
+            pass
+    elif query.data.startswith('free_premium'):
+        clicker = int(query.data.split("#")[1])
+        if clicker not in [query.from_user.id, 0]:
+            return await query.answer(
+            f"Hey {query.from_user.first_name}, Jaldi Yeha Se Hato", show_alert=True
+            )
+        return await query.message.edit(script.REF_LINK.format(temp.U_NAME , clicker , PREMIUM_POINT) , reply_markup=InlineKeyboardMarkup([
+	    [InlineKeyboardButton('⋞ ʜᴏᴍᴇ', callback_data='start')]
+        ]))
+    elif query.data.startswith('point'):
+        clicker = int(query.data.split("#")[1])
+        if clicker not in [query.from_user.id, 0]:
+            return await query.answer(
+            f"Hey {query.from_user.first_name}, Jaldi Yeha Se Hato", show_alert=True
+            )
+        newPoint = await db.get_point(clicker)
+        
+        return await query.message.edit(script.REF_POINT.format(newPoint) , reply_markup=InlineKeyboardMarkup([
+                [InlineKeyboardButton('🎁 ɢᴇᴛ ʏᴏᴜʀ ʀᴇғᴇʀʀᴀʟ ʟɪɴᴋ 🎁', callback_data=f'free_premium#{query.from_user.id}')],   
+                [InlineKeyboardButton('⋞ ʜᴏᴍᴇ', callback_data='start')],]))
+        
+    elif query.data == "premium":
+        userid = query.from_user.id
+        await query.message.edit(script.PREMIUM_TEXT , reply_markup=InlineKeyboardMarkup([
+        [InlineKeyboardButton('🤞🏻 ʟᴏᴡ ᴘʀɪᴄᴇ ᴘʟᴀɴs 🍿', callback_data='plans')],
+        [InlineKeyboardButton('⋞ ʜᴏᴍᴇ', callback_data='start')]
+        ]))
+    elif query.data == "plans":
+        userid = query.from_user.id
+        await query.message.edit(script.PLAN_TEXT  , reply_markup=InlineKeyboardMarkup([
+        [InlineKeyboardButton('🤞🏻 ʙᴜʏ ᴘʟᴀɴ 🍿', callback_data='buy_plan')],
+        [InlineKeyboardButton('⋞ ʙᴀᴄᴋ', callback_data='premium')]
+        ]))
+    elif query.data == "buy_plan":
+        userid = query.from_user.id
+        await query.message.edit(script.BUY_PLAN  , reply_markup=InlineKeyboardMarkup([
+        [InlineKeyboardButton('⋞ ʙᴀᴄᴋ', callback_data='plans')]
+        ]))
